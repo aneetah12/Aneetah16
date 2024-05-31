@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clock, Stopwatch, Alarm</title>
+<link rel="stylesheet" href="stopwatchcss.css">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    .clock {
+        font-size: 24px;
+        margin-top: 20px;
+        color: rgb(16, 16, 16);
+    }
+    .stopwatch {
+        font-size: 24px;
+        margin-top: 20px;
+        color: rgb(14, 14, 14);
+    }
+    .alarm {
+        margin-top: 20px;
+       
+    }
+</style>
+</head>
+<body>
+   
+<div class="clock">Loading clock...</div>
+<div class="stopwatch">0:00:00</div>
+<div class="alarm">
+    <input type="time" id="alarmTime">
+    <button onclick="setAlarm()">Set Alarm</button>
+</div>
+
+<script>
+    // Clock
+    function updateClock() {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+        const formattedTime = pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+        document.querySelector('.clock').textContent = formattedTime;
+    }
+
+    // Pad single digit numbers with leading zero
+    function pad(value) {
+        return value < 10 ? "0" + value : value;
+    }
+
+    // Update clock every second
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Stopwatch
+    let stopwatchTimer;
+    let stopwatchHours = 0;
+    let stopwatchMinutes = 0;
+    let stopwatchSeconds = 0;
+
+    function startStopwatch() {
+        stopwatchTimer = setInterval(updateStopwatch, 1000);
+    }
+
+    function stopStopwatch() {
+        clearInterval(stopwatchTimer);
+    }
+
+    function resetStopwatch() {
+        clearInterval(stopwatchTimer);
+        stopwatchHours = 0;
+        stopwatchMinutes = 0;
+        stopwatchSeconds = 0;
+        updateStopwatch();
+    }
+
+    function updateStopwatch() {
+        stopwatchSeconds++;
+        if (stopwatchSeconds === 60) {
+            stopwatchSeconds = 0;
+            stopwatchMinutes++;
+            if (stopwatchMinutes === 60) {
+                stopwatchMinutes = 0;
+                stopwatchHours++;
+            }
+        }
+        const formattedTime = pad(stopwatchHours) + ":" + pad(stopwatchMinutes) + ":" + pad(stopwatchSeconds);
+        document.querySelector('.stopwatch').textContent = formattedTime;
+    }
+
+    // Alarm
+    function setAlarm() {
+        const alarmTimeInput = document.getElementById('alarmTime').value;
+        const [alarmHours, alarmMinutes] = alarmTimeInput.split(":");
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const alarmTime = parseInt(alarmHours) * 60 + parseInt(alarmMinutes);
+
+        if (alarmTime < currentTime) {
+            alert("Alarm time should be in the future.");
+            return;
+        }
+
+        const timeUntilAlarm = (alarmTime - currentTime) * 60000; // Convert to milliseconds
+        setTimeout(() => {
+            alert("Alarm!");
+        }, timeUntilAlarm);
+    }
+</script>
+<a href="portfolio.html"><span class="back-to-top">GO BACK TO HOME</span></a>
+</body>
+</html>
